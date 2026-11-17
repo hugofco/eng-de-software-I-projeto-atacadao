@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titulo %}Trocar senha{% endblock %}
+{% block conteudo %}
+<h1>Trocar senha</h1>
+<form method="post" class="painel-form">
+  {% csrf_token %}
+  {% include "includes/form.html" %}
+  <div class="acoes"><button type="submit">Salvar nova senha</button>
+  <a class="botao secundario" href="{% url 'core:home' %}">Cancelar</a></div>
+</form>
+{% endblock %}

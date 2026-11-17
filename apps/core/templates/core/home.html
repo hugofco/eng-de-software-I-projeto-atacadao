@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h1>Olá, {{ user.get_short_name }}</h1>
+
+{% if user.perfil == "gerente" and painel %}
+  <p>Resumo das tarefas de hoje · <a href="{% url 'tarefas:painel' %}">ver painel por setor</a></p>
+  <div class="grade">
+    <div class="cartao"><small>Pendentes</small><strong>{{ painel.totais.pendente }}</strong></div>
+    <div class="cartao"><small>Em andamento</small><strong>{{ painel.totais.em_andamento }}</strong></div>
+    <div class="cartao"><small>Concluídas</small><strong>{{ painel.totais.concluida }}</strong></div>
+    <div class="cartao"><small>Atrasadas</small><strong class="atrasada">{{ painel.totais.atrasadas }}</strong></div>
+  </div>
+  <div class="acoes">
+    <a class="botao" href="{% url 'tarefas:nova' %}">Nova tarefa</a>
+    <a class="botao secundario" href="{% url 'accounts:novo' %}">Novo funcionário</a>
+    <a class="botao secundario" href="{% url 'comunicacao:enviar' %}">Enviar comunicado</a>
+  </div>
+
+{% elif user.perfil == "funcionario" and user.filial_id %}
+  <div class="grade">
+    <div class="cartao"><small>Tarefas abertas</small><strong>{{ tarefas_abertas }}</strong>
+      <a href="{% url 'tarefas:minhas' %}">Ver minhas tarefas</a></div>
+    <div class="cartao"><small>Escala de hoje</small>
+      <strong>{% if escala_hoje %}{{ escala_hoje.get_turno_display }}{% else %}Folga{% endif %}</strong>
+      <a href="{% url 'escalas:minha' %}">Ver semana</a></div>
+    <div class="cartao"><small>Último ponto</small>
+      {% if ultimo_ponto %}<strong>{{ ultimo_ponto.get_tipo_display }}</strong>
+        {{ ultimo_ponto.registrado_em|date:"d/m H:i" }}
+      {% else %}<strong>—</strong>{% endif %}
+      <br><a href="{% url 'ponto:meu_ponto' %}">Registrar ponto</a></div>
+    <div class="cartao"><small>Comunicados novos</small><strong>{{ badge_nao_lidos|default:0 }}</strong>
+      <a href="{% url 'comunicacao:meus' %}">Ler comunicados</a></div>
+  </div>
+
+{% else %}
+  <p>Sua conta não está vinculada a uma filial. Use o
+    {% if user.is_staff %}<a href="{% url 'admin:index' %}">painel administrativo</a>{% else %}painel administrativo (peça acesso ao responsável){% endif %}.</p>
+{% endif %}
+{% endblock %}

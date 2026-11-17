@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block conteudo %}
+<h1>{{ titulo }}</h1>
+
+{% if funcionario %}
+<p><small>Matrícula {{ funcionario.matricula }} ·
+  {% if funcionario.atualizado_em %}última alteração em {{ funcionario.atualizado_em|date:"d/m/Y H:i" }}
+  por {{ funcionario.atualizado_por.nome|default:"—" }}{% else %}sem alterações após o cadastro{% endif %}</small></p>
+{% endif %}
+
+<form method="post" class="painel-form">
+  {% csrf_token %}
+  {% include "includes/form.html" %}
+  <div class="acoes"><button type="submit">Salvar</button>
+  <a class="botao secundario" href="{% url 'accounts:lista' %}">Cancelar</a></div>
+</form>
+
+{% if alteracoes %}
+<h2>Histórico de alterações (últimas 10)</h2>
+<table>
+  <thead><tr><th>Quando</th><th>Quem</th><th>Campo</th><th>De</th><th>Para</th></tr></thead>
+  <tbody>
+  {% for a in alteracoes %}
+    <tr><td>{{ a.em|date:"d/m/Y H:i" }}</td><td>{{ a.alterado_por.nome|default:"—" }}</td>
+        <td>{{ a.campo }}</td><td>{{ a.valor_anterior }}</td><td>{{ a.valor_novo }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block titulo %}Log de ponto{% endblock %}
+{% block conteudo %}
+<h1>Log de ponto</h1>
+
+<form method="get" class="filtro">
+  {% for campo in form %}<div><label for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}</div>{% endfor %}
+  <button type="submit">Consultar</button>
+</form>
+{% if form.non_field_errors %}<div class="alerta error">{{ form.non_field_errors }}</div>{% endif %}
+{% for campo in form %}{% if campo.errors %}<div class="alerta error">{{ campo.label }}: {{ campo.errors|join:" " }}</div>{% endif %}{% endfor %}
+
+{% if frequencia %}
+<h2>Frequência no período</h2>
+<div class="tabela-rolagem">
+<table>
+  <thead><tr><th>Funcionário</th><th class="num">Dias com entrada</th><th class="num">Horas trabalhadas</th><th>Situação</th></tr></thead>
+  <tbody>
+  {% for f in frequencia %}
+    <tr{% if f.em_aberto %} class="destaque"{% endif %}>
+      <td>{{ f.funcionario.nome }}</td><td class="num">{{ f.dias_trabalhados }}</td><td class="num">{{ f.horas }}</td>
+      <td>{% if f.em_aberto %}Entrada sem saída registrada{% else %}—{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2>Registros</h2>
+<div class="tabela-rolagem">
+<table>
+  <thead><tr><th>Data/hora (servidor)</th><th>Funcionário</th><th>Tipo</th><th>Terminal</th><th>IP</th></tr></thead>
+  <tbody>
+  {% for r in pagina %}
+    <tr><td>{{ r.registrado_em|date:"d/m/Y H:i:s" }}</td><td>{{ r.funcionario.nome }}</td><td>{{ r.get_tipo_display }}</td>
+        <td>{{ r.terminal.nome|default:"—" }}</td><td>{{ r.ip_origem|default:"—" }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% include "includes/pager.html" %}
+{% elif form.is_valid %}
+<p class="vazio">Nenhum registro no período.</p>
+{% endif %}
+{% endblock %}

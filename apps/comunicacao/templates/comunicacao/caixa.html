@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Mensagens recebidas{% endblock %}
+{% block conteudo %}
+<h1>Mensagens dos funcionários</h1>
+{% for m in pagina %}
+  <div class="mensagem-item{% if not m.lida %} novo-item{% endif %}">
+    <div class="meta">{{ m.criada_em|date:"d/m/Y H:i" }} · <strong>{{ m.remetente.nome }}</strong>
+      ({{ m.remetente.setor|default:"—" }}) · {{ m.get_tipo_display }}</div>
+    {{ m.texto }}
+    <div class="acoes" style="margin-top:.5rem">
+      {% if m.tipo == "troca_turno" %}<a href="{% url 'escalas:ocorrencias' %}?funcionario={{ m.remetente_id }}">Registrar ocorrência</a>{% endif %}
+      {% if not m.lida %}
+        <form class="inline" method="post" action="{% url 'comunicacao:lida' m.pk %}">{% csrf_token %}
+          <button type="submit" class="secundario pequeno">Marcar como lida</button></form>
+      {% endif %}
+    </div>
+  </div>
+{% empty %}<p class="vazio">Nenhuma mensagem recebida.</p>{% endfor %}
+{% include "includes/pager.html" %}
+{% endblock %}

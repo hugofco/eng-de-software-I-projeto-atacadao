@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block titulo %}Comunicados{% endblock %}
+{% block conteudo %}
+<h1>Comunicados</h1>
+{% for c in comunicados %}
+  <div class="mensagem-item{% if c.novo %} novo-item{% endif %}">
+    <div class="meta">{% if c.novo %}<span class="novo">NOVO</span> · {% endif %}{{ c.criado_em|date:"d/m/Y H:i" }}
+      · {% if c.automatico %}Aviso automático{% else %}{{ c.autor.nome|default:"Gerência" }}{% endif %}
+      · {{ c.destino_descricao }}</div>
+    {{ c.texto }}
+  </div>
+{% empty %}<p class="vazio">Nenhum comunicado para você.</p>{% endfor %}
+{% include "includes/pager.html" %}
+{% endblock %}

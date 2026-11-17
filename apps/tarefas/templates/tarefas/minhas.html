@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titulo %}Minhas tarefas{% endblock %}
+{% block conteudo %}
+<h1>Minhas tarefas</h1>
+<p class="acoes">
+  {% if ver == "abertas" %}<strong>Abertas</strong>{% else %}<a href="?ver=abertas">Abertas</a>{% endif %} ·
+  {% if ver == "encerradas" %}<strong>Encerradas</strong>{% else %}<a href="?ver=encerradas">Encerradas</a>{% endif %}
+</p>
+
+{% for t in tarefas %}
+  <div class="cartao" style="margin-bottom:.7rem">
+    <div class="acoes" style="justify-content:space-between">
+      <strong>{{ t.titulo }}</strong>
+      <span class="status {{ t.status }}">{{ t.get_status_display }}</span>
+    </div>
+    {% if t.descricao %}<p>{{ t.descricao }}</p>{% endif %}
+    <p><small>Setor {{ t.setor.nome }} · prazo {{ t.prazo|date:"d/m/Y H:i" }}
+      {% if t.concluida_em %} · concluída em {{ t.concluida_em|date:"d/m/Y H:i" }}{% endif %}</small></p>
+    {% if t.status == "pendente" %}
+      <form class="inline" method="post" action="{% url 'tarefas:status' t.pk %}">
+        {% csrf_token %}<input type="hidden" name="novo" value="em_andamento"><button type="submit">Iniciar</button></form>
+    {% elif t.status == "em_andamento" %}
+      <div class="acoes">
+        <form class="inline" method="post" action="{% url 'tarefas:status' t.pk %}">
+          {% csrf_token %}<input type="hidden" name="novo" value="concluida"><button type="submit">Concluir</button></form>
+        <form class="inline" method="post" action="{% url 'tarefas:status' t.pk %}">
+          {% csrf_token %}<input type="hidden" name="novo" value="pendente"><button type="submit" class="secundario">Pausar</button></form>
+      </div>
+    {% endif %}
+  </div>
+{% empty %}
+  <p class="vazio">Nenhuma tarefa {% if ver == "abertas" %}aberta{% else %}encerrada{% endif %}.</p>
+{% endfor %}
+{% endblock %}

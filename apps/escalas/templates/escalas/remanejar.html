@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titulo %}Remanejamento imediato{% endblock %}
+{% block conteudo %}
+<h1>Remanejamento imediato</h1>
+<p><small>Lista apenas funcionários ativos, escalados para o turno de agora e sem ausência registrada hoje.
+  O funcionário é notificado automaticamente com o horário de início.</small></p>
+
+{% if ha_disponiveis %}
+<form method="post" class="painel-form">
+  {% csrf_token %}
+  {% include "includes/form.html" %}
+  <button type="submit">Remanejar e notificar</button>
+</form>
+{% else %}
+<div class="alerta warning">Nenhum funcionário disponível neste momento (fora de turno, folga ou ausência).</div>
+{% endif %}
+{% endblock %}

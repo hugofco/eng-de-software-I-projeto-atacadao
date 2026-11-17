@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block titulo %}Tarefas{% endblock %}
+{% block conteudo %}
+<h1>Tarefas</h1>
+<p class="acoes"><a class="botao" href="{% url 'tarefas:nova' %}">+ Nova tarefa</a>
+  <a class="botao secundario" href="{% url 'tarefas:painel' %}">Painel do dia</a></p>
+
+<form method="get" class="filtro">
+  {% for campo in filtro %}<div><label for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}</div>{% endfor %}
+  <button type="submit">Filtrar</button>
+  <a href="{% url 'tarefas:lista' %}">Limpar</a>
+</form>
+
+{% if pagina.object_list %}
+<div class="tabela-rolagem">
+<table>
+  <thead><tr><th>Tarefa</th><th>Setor</th><th>Responsáveis</th><th>Prazo</th><th>Status</th><th>Ações</th></tr></thead>
+  <tbody>
+  {% for t in pagina %}
+    <tr>
+      <td><strong>{{ t.titulo }}</strong>{% if t.descricao %}<br><small>{{ t.descricao }}</small>{% endif %}</td>
+      <td>{{ t.setor.nome }}</td>
+      <td>{% for r in t.responsaveis.all %}{{ r.nome }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</td>
+      <td>{{ t.prazo|date:"d/m/Y H:i" }}</td>
+      <td><span class="status {{ t.status }}">{{ t.get_status_display }}</span>
+        {% if t.concluida_em %}<br><small>em {{ t.concluida_em|date:"d/m H:i" }}</small>{% endif %}</td>
+      <td>
+        {% if t.aberta %}
+        <form class="inline" method="post" action="{% url 'tarefas:status' t.pk %}">
+          {% csrf_token %}<input type="hidden" name="novo" value="cancelada">
+          <button type="submit" class="secundario pequeno">Cancelar</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% include "includes/pager.html" %}
+{% else %}
+<p class="vazio">Nenhuma tarefa encontrada.</p>
+{% endif %}
+{% endblock %}

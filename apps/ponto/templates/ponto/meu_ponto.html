@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block titulo %}Ponto{% endblock %}
+{% block conteudo %}
+<h1>Registro de ponto</h1>
+<p class="relogio">{{ hora_servidor|date:"H:i:s" }}</p>
+<p><small>{{ hora_servidor|date:"d/m/Y" }} · horário do servidor. O registro usa sempre este relógio, nunca o do seu dispositivo.
+  (Atualize a página para ver a hora atual.)</small></p>
+
+<div class="botoes-ponto">
+  <form method="post">{% csrf_token %}<input type="hidden" name="tipo" value="entrada">
+    <button type="submit"{% if proximo.value != "entrada" %} disabled{% endif %}>Registrar ENTRADA</button></form>
+  <form method="post">{% csrf_token %}<input type="hidden" name="tipo" value="saida">
+    <button type="submit"{% if proximo.value != "saida" %} disabled{% endif %}>Registrar SAÍDA</button></form>
+</div>
+
+<h2>Registros de hoje</h2>
+{% if registros_hoje %}
+<table>
+  <thead><tr><th>Tipo</th><th>Horário</th></tr></thead>
+  <tbody>
+  {% for r in registros_hoje %}<tr><td>{{ r.get_tipo_display }}</td><td>{{ r.registrado_em|date:"H:i:s" }}</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% else %}<p class="vazio">Nenhum registro hoje.</p>{% endif %}
+{% endblock %}

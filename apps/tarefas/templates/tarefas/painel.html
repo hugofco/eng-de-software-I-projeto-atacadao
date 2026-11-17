@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}Painel do dia{% endblock %}
+{% block conteudo %}
+<h1>Painel de tarefas do dia, por setor</h1>
+<p><small>“Do dia” = tarefas com prazo hoje (canceladas não entram). “Atrasadas” = abertas com prazo já vencido, de qualquer dia.</small></p>
+
+<div class="tabela-rolagem">
+<table>
+  <thead><tr><th>Setor</th><th class="num">Pendentes</th><th class="num">Em execução</th><th class="num">Concluídas</th><th class="num">Atrasadas</th></tr></thead>
+  <tbody>
+  {% for l in linhas %}
+    <tr>
+      <td>{{ l.setor.nome }}</td>
+      <td class="num">{{ l.pendente }}</td>
+      <td class="num">{{ l.em_andamento }}</td>
+      <td class="num">{{ l.concluida }}</td>
+      <td class="num{% if l.atrasadas %} atrasada{% endif %}">{{ l.atrasadas }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="5" class="vazio">Nenhum setor cadastrado.</td></tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr><th>Total</th><th class="num">{{ totais.pendente }}</th><th class="num">{{ totais.em_andamento }}</th>
+        <th class="num">{{ totais.concluida }}</th><th class="num">{{ totais.atrasadas }}</th></tr>
+  </tfoot>
+</table>
+</div>
+{% endblock %}

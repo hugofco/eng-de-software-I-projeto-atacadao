@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}Minha escala{% endblock %}
+{% block conteudo %}
+<h1>Minha escala da semana</h1>
+<table>
+  <thead><tr><th>Dia</th><th>Turno</th></tr></thead>
+  <tbody>
+  {% for d in dias %}<tr><td>{{ d.nome }}</td><td>{{ d.turno }}</td></tr>{% endfor %}
+  </tbody>
+</table>
+<p><small>Total: {{ horas }} h na semana. “—” indica folga.</small></p>
+{% endblock %}

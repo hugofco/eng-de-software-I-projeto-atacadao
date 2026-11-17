@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titulo %}Escala de {{ funcionario.nome }}{% endblock %}
+{% block conteudo %}
+<h1>Escala de {{ funcionario.nome }}</h1>
+<p><small>Limite contratual: {{ funcionario.carga_horaria_semanal }} h/semana · cada turno conta 6 h ·
+  descanso mínimo de 11 h entre turnos.
+  {% if ultima %}Última alteração: {{ ultima.atualizada_em|date:"d/m/Y H:i" }} por {{ ultima.atualizada_por.nome|default:"—" }}.{% endif %}</small></p>
+
+<form method="post" class="painel-form">
+  {% csrf_token %}
+  {% include "includes/form.html" %}
+  <div class="acoes"><button type="submit">Salvar escala</button>
+  <a class="botao secundario" href="{% url 'escalas:visao_geral' %}">Cancelar</a></div>
+</form>
+{% endblock %}

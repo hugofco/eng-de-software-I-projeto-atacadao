@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block titulo %}Ocorrências{% endblock %}
+{% block conteudo %}
+<h1>Ocorrências</h1>
+<p><small>Registre ausências, atrasos e trocas de turno solicitadas pelos funcionários.</small></p>
+
+<form method="post" class="painel-form">
+  {% csrf_token %}
+  {% include "includes/form.html" %}
+  <button type="submit">Registrar ocorrência</button>
+</form>
+
+<h2>Últimas ocorrências</h2>
+{% if ocorrencias %}
+<div class="tabela-rolagem">
+<table>
+  <thead><tr><th>Data</th><th>Funcionário</th><th>Tipo</th><th>Observação</th><th>Registrada por</th></tr></thead>
+  <tbody>
+  {% for o in ocorrencias %}
+    <tr><td>{{ o.data|date:"d/m/Y" }}</td><td>{{ o.funcionario.nome }}</td><td>{{ o.get_tipo_display }}</td>
+        <td>{{ o.observacao }}</td><td>{{ o.registrada_por.nome|default:"—" }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}<p class="vazio">Nenhuma ocorrência registrada.</p>{% endif %}
+{% endblock %}

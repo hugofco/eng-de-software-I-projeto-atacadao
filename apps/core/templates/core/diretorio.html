@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block titulo %}Diretório de setores{% endblock %}
+{% block conteudo %}
+<h1>Diretório de setores</h1>
+<p>Encontre o setor responsável por um produto ou área e quem atende nele.</p>
+
+<form method="get" class="filtro">
+  <div><label for="q">Produto ou área</label>
+  <input type="text" id="q" name="q" value="{{ termo }}" placeholder="Ex.: cerveja, carnes, limpeza"></div>
+  <button type="submit">Buscar</button>
+  <a href="{% url 'core:diretorio' %}">Limpar</a>
+</form>
+
+{% for linha in linhas %}
+  <div class="cartao" style="margin-bottom:.8rem">
+    <h2 style="margin-top:0">{{ linha.setor.nome }}</h2>
+    {% if linha.setor.areas %}<p><strong>Atende:</strong> {{ linha.setor.areas }}</p>{% endif %}
+    {% if linha.setor.ramal %}<p><strong>Ramal:</strong> {{ linha.setor.ramal }}</p>{% endif %}
+    <p><strong>Funcionários:</strong>
+      {% for nome in linha.funcionarios %}{{ nome }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</p>
+  </div>
+{% empty %}
+  <p class="vazio">Nenhum setor encontrado para essa busca.</p>
+{% endfor %}
+{% endblock %}

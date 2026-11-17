@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block titulo %}Falar com o gerente{% endblock %}
+{% block conteudo %}
+<h1>Falar com o gerente</h1>
+<p><small>Dúvida sobre uma tarefa, pedido de troca de turno ou outro assunto.</small></p>
+<form method="post" class="painel-form">
+  {% csrf_token %}
+  {% include "includes/form.html" %}
+  <button type="submit">Enviar</button>
+</form>
+
+<h2>Mensagens que você enviou</h2>
+{% for m in enviadas %}
+  <div class="mensagem-item">
+    <div class="meta">{{ m.criada_em|date:"d/m/Y H:i" }} · {{ m.get_tipo_display }} · {% if m.lida %}lida pelo gerente{% else %}ainda não lida{% endif %}</div>
+    {{ m.texto }}
+  </div>
+{% empty %}<p class="vazio">Você ainda não enviou mensagens.</p>{% endfor %}
+{% endblock %}

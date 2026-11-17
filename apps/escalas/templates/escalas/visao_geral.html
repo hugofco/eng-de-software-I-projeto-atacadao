@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block titulo %}Escalas{% endblock %}
+{% block conteudo %}
+<h1>Escala semanal da equipe</h1>
+<p><small>“—” indica folga. Clique em “Editar” para definir os turnos de um funcionário.</small></p>
+
+<div class="tabela-rolagem">
+<table>
+  <thead><tr><th>Funcionário</th>{% for d in dias %}<th>{{ d|slice:":3" }}</th>{% endfor %}<th class="num">Horas</th><th class="num">Limite</th><th></th></tr></thead>
+  <tbody>
+  {% for l in linhas %}
+    <tr>
+      <td>{{ l.funcionario.nome }}<br><small>{{ l.funcionario.setor|default:"—" }}</small></td>
+      {% for turno in l.dias %}<td>{{ turno }}</td>{% endfor %}
+      <td class="num">{{ l.horas }} h</td>
+      <td class="num">{{ l.funcionario.carga_horaria_semanal }} h</td>
+      <td><a href="{% url 'escalas:editar' l.funcionario.pk %}">Editar</a></td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="11" class="vazio">Nenhum funcionário ativo.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

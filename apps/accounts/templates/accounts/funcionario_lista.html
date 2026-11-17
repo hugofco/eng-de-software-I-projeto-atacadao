@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block titulo %}Funcionários{% endblock %}
+{% block conteudo %}
+<h1>Funcionários</h1>
+<p><a class="botao" href="{% url 'accounts:novo' %}">+ Novo funcionário</a></p>
+
+<form method="get" class="filtro">
+  {% for campo in filtro %}<div><label for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}</div>{% endfor %}
+  <button type="submit">Filtrar</button>
+  <a href="{% url 'accounts:lista' %}">Limpar</a>
+</form>
+
+{% if pagina.object_list %}
+<div class="tabela-rolagem">
+<table>
+  <thead><tr><th>Matrícula</th><th>Nome</th><th>CPF</th><th>Perfil</th><th>Cargo</th><th>Setor</th><th>Turno</th><th>Status</th><th>Ações</th></tr></thead>
+  <tbody>
+  {% for f in pagina %}
+    <tr{% if not f.is_active %} class="inativo"{% endif %}>
+      <td>{{ f.matricula }}</td>
+      <td>{{ f.nome }}</td>
+      <td>{{ f.cpf_formatado }}</td>
+      <td>{{ f.get_perfil_display }}</td>
+      <td>{{ f.cargo|default:"—" }}</td>
+      <td>{{ f.setor|default:"—" }}</td>
+      <td>{{ f.get_turno_display }}</td>
+      <td>{% if f.is_active %}Ativo{% else %}Inativo{% endif %}</td>
+      <td class="acoes">
+        <a href="{% url 'accounts:editar' f.pk %}">Editar</a>
+        {% if f.pk != user.pk %}
+        <form class="inline" method="post" action="{% url 'accounts:status' f.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="secundario pequeno">{% if f.is_active %}Desativar{% else %}Reativar{% endif %}</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% include "includes/pager.html" %}
+{% else %}
+<p class="vazio">Nenhum funcionário encontrado.</p>
+{% endif %}
+{% endblock %}
