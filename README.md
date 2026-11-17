@@ -1,4 +1,4 @@
-# WFM Atacadão — Protótipo
+# WFM Atacadão-Protótipo
 
 Protótipo funcional da **Plataforma de Gestão de Força de Trabalho para Atacadões** (Engenharia de Software I).
 Implementa os requisitos de sistema **RS01 a RS18** do documento de especificação, em **Python + Django + PostgreSQL**
