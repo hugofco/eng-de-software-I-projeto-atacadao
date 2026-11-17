@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block titulo %}Não encontrado{% endblock %}
+{% block conteudo %}
+<h1>Página não encontrada</h1>
+<p>O endereço não existe ou o registro não está disponível para você.</p>
+<p><a href="{% url 'core:home' %}">Voltar ao início</a></p>
+{% endblock %}

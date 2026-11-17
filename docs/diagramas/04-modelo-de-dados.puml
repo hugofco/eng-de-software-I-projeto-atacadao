@@ -1,0 +1,74 @@
+@startuml
+title Modelo de dados (classes Django) - WFM Atacadão
+skinparam shadowing false
+hide empty methods
+
+package core {
+  class Filial { nome; ativa }
+  class Setor { nome; areas; ramal }
+  class Cargo { nome }
+  class Terminal { nome; ip_address (único); ativo }
+}
+
+package accounts {
+  class Funcionario {
+    matricula (único, login)
+    nome; cpf (único, 11 dígitos)
+    data_nascimento
+    perfil: gerente | funcionario | comprador
+    turno: manhã | tarde | noite
+    carga_horaria_semanal
+    is_active (status RS03)
+    atualizado_em; atualizado_por
+  }
+  class AlteracaoFuncionario { em; campo; valor_anterior; valor_novo }
+}
+
+package tarefas {
+  class Tarefa {
+    titulo; descricao; prazo
+    status: pendente | em_andamento | concluida | cancelada
+    concluida_em
+  }
+}
+
+package escalas {
+  class Escala { dia_semana (0-6); turno; atualizada_em }
+  class Ocorrencia { tipo; data; observacao }
+  class Remanejamento { funcao; iniciado_em }
+}
+
+package ponto {
+  class RegistroPonto <<imutável>> { tipo; registrado_em (servidor, UTC); ip_origem }
+}
+
+package comunicacao {
+  class Comunicado { destino_tipo; texto (<=500); criado_em; automatico }
+  class LeituraComunicado { lido_em }
+  class Mensagem { tipo; texto (<=500); lida }
+}
+
+Filial "1" -- "0..*" Setor
+Filial "1" -- "0..*" Terminal
+Filial "1" -- "0..*" Funcionario
+Setor "1" -- "0..*" Funcionario
+Cargo "1" -- "0..*" Funcionario
+Funcionario "1" -- "0..*" AlteracaoFuncionario
+
+Setor "1" -- "0..*" Tarefa
+Tarefa "0..*" -- "0..*" Funcionario : responsáveis
+
+Funcionario "1" -- "0..*" Escala
+Funcionario "1" -- "0..*" Ocorrencia
+Funcionario "1" -- "0..*" Remanejamento
+Setor "1" -- "0..*" Remanejamento : origem / destino
+
+Funcionario "1" -- "0..*" RegistroPonto
+Terminal "0..1" -- "0..*" RegistroPonto
+
+Filial "1" -- "0..*" Comunicado
+Comunicado "0..*" -- "0..1" Setor : destino
+Comunicado "0..*" -- "0..1" Funcionario : destinatário
+Comunicado "1" -- "0..*" LeituraComunicado
+Funcionario "1" -- "0..*" Mensagem : remetente
+@enduml

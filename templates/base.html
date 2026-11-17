@@ -1,0 +1,57 @@
+{% load static %}<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Início{% endblock %} · WFM Atacadão</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+<header class="topo">
+  <div class="topo-in">
+    <a class="marca" href="{% url 'core:home' %}">WFM Atacadão</a>
+    {% if user.is_authenticated %}
+    <nav class="menu" aria-label="Principal">
+      {% if user.perfil == "gerente" and user.filial_id %}
+        <a href="{% url 'tarefas:painel' %}">Painel</a>
+        <a href="{% url 'tarefas:lista' %}">Tarefas</a>
+        <a href="{% url 'accounts:lista' %}">Funcionários</a>
+        <a href="{% url 'escalas:visao_geral' %}">Escalas</a>
+        <a href="{% url 'ponto:log' %}">Log de ponto</a>
+        <a href="{% url 'escalas:ocorrencias' %}">Ocorrências</a>
+        <a href="{% url 'escalas:remanejar' %}">Remanejar</a>
+        <a href="{% url 'comunicacao:enviar' %}">Comunicados</a>
+        <a href="{% url 'comunicacao:caixa' %}">Mensagens{% if badge_nao_lidos %} <span class="badge">{{ badge_nao_lidos }}</span>{% endif %}</a>
+        <a href="{% url 'core:diretorio' %}">Diretório</a>
+      {% elif user.perfil == "funcionario" and user.filial_id %}
+        <a href="{% url 'tarefas:minhas' %}">Minhas tarefas</a>
+        <a href="{% url 'escalas:minha' %}">Minha escala</a>
+        <a href="{% url 'ponto:meu_ponto' %}">Ponto</a>
+        <a href="{% url 'comunicacao:meus' %}">Comunicados{% if badge_nao_lidos %} <span class="badge">{{ badge_nao_lidos }}</span>{% endif %}</a>
+        <a href="{% url 'comunicacao:nova_mensagem' %}">Falar com o gerente</a>
+      {% elif user.perfil == "comprador" and user.filial_id %}
+        <a href="{% url 'core:diretorio' %}">Diretório de setores</a>
+      {% endif %}
+      {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+    </nav>
+    <form class="sair" method="post" action="{% url 'accounts:logout' %}">
+      {% csrf_token %}
+      <a class="usuario" href="{% url 'accounts:trocar_senha' %}" title="Trocar senha">{{ user.get_short_name }}</a>
+      <button type="submit" class="link">Sair</button>
+    </form>
+    {% endif %}
+  </div>
+</header>
+
+<main class="conteudo">
+  {% if messages %}
+    <div class="mensagens">
+      {% for m in messages %}<div class="alerta {{ m.tags }}" role="status">{{ m.message }}</div>{% endfor %}
+    </div>
+  {% endif %}
+  {% block conteudo %}{% endblock %}
+</main>
+
+<footer class="rodape">Protótipo — Engenharia de Software I · sem JavaScript, renderização no servidor</footer>
+</body>
+</html>

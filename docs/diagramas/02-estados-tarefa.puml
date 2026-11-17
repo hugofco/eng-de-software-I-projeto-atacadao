@@ -1,0 +1,19 @@
+@startuml
+title Estados da Tarefa de Loja (implementado em apps/tarefas/services.py)
+skinparam shadowing false
+
+[*] --> Pendente : gerente cria tarefa
+Pendente --> EmAndamento : funcionário inicia
+EmAndamento --> Concluida : funcionário conclui\n(grava data de conclusão do servidor)
+EmAndamento --> Pendente : funcionário pausa
+Pendente --> Cancelada : gerente revoga
+EmAndamento --> Cancelada : gerente revoga
+Concluida --> [*]
+Cancelada --> [*]
+
+note right of Concluida
+  Estados finais: não há transição de saída.
+  O funcionário só age em tarefas atribuídas a ele (RS13).
+  O gerente só pode cancelar.
+end note
+@enduml

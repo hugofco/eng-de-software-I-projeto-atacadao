@@ -1,0 +1,8 @@
+{# Paginação simples por links. Espera as variáveis `pagina` e `qs` (querystring sem page). #}
+{% if pagina.has_other_pages %}
+<nav class="pager" aria-label="Paginação">
+  {% if pagina.has_previous %}<a href="?{% if qs %}{{ qs }}&amp;{% endif %}page={{ pagina.previous_page_number }}">« Anterior</a>{% endif %}
+  <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+  {% if pagina.has_next %}<a href="?{% if qs %}{{ qs }}&amp;{% endif %}page={{ pagina.next_page_number }}">Próxima »</a>{% endif %}
+</nav>
+{% endif %}

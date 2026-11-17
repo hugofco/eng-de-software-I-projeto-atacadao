@@ -1,0 +1,53 @@
+@startuml
+title Arquitetura do protótipo (Monolito Modular Django, SSR) - WFM Atacadão
+skinparam componentStyle uml2
+skinparam shadowing false
+
+node "Terminal da loja\n(navegador, sem JS)" as Client
+
+node "Infraestrutura web" {
+  component "Gunicorn\n(WSGI)\n+ WhiteNoise (estáticos)" as WSGI
+}
+
+package "Projeto Django (config)" {
+  component "URL dispatcher\n(config/urls.py)" as URLs
+  component "Middlewares\n(sessão, CSRF, auth, messages)" as Middleware
+
+  package "Módulos de negócio (apps/)" {
+    component "core\nFilial, Setor, Cargo, Terminal\nhome, diretório (RS18)" as Core
+    component "accounts\nFuncionario, login CPF/matrícula\nRS01-RS03" as Accounts
+    component "tarefas\nRS04, RS05, RS10, RS13" as Tarefas
+    component "escalas\nRS06, RS07, RS11, RS12, RS17" as Escalas
+    component "ponto\nRS09, RS14 (log imutável)" as Ponto
+    component "comunicacao\nRS08, RS15, RS16" as Comunic
+  }
+
+  component "Camada de serviços\n(services.py de cada módulo:\nregras de negócio testáveis)" as Services
+  component "Templates Django (SSR)\n+ CSS único" as Templates
+}
+
+database "PostgreSQL 16\n(SQLite no início rápido)" as DB
+
+Client -down-> WSGI : HTTP(S)
+WSGI -down-> Middleware : Request
+Middleware -down-> URLs
+URLs -down-> Accounts
+URLs -down-> Tarefas
+URLs -down-> Escalas
+URLs -down-> Ponto
+URLs -down-> Comunic
+URLs -down-> Core
+Accounts ..> Services
+Tarefas ..> Services
+Escalas ..> Services
+Ponto ..> Services
+Comunic ..> Services
+Services -down-> DB : Django ORM
+Accounts -right-> Templates : render
+note bottom of Services
+  Dependências entre módulos (setas de código):
+  escalas -> comunicacao (notificação do remanejamento)
+  tarefas, escalas, ponto, comunicacao -> accounts, core
+  core.home compõe dados de tarefas/escalas/ponto
+end note
+@enduml

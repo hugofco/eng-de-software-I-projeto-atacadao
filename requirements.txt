@@ -1,0 +1,5 @@
+# Django 5.2 LTS (suporte até 2028) exige Python 3.10+; o projeto adota Python 3.12+ (seção 6.2 do documento).
+Django>=5.2,<5.3
+psycopg[binary]>=3.2
+gunicorn>=23.0
+whitenoise>=6.7

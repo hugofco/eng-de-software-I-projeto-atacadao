@@ -1,0 +1,60 @@
+@startuml
+' Versão CORRIGIDA do diagrama 7.3 do documento original.
+' Erros de sintaxe do original: "rectangle ..." com a chave "{" na linha seguinte,
+' e um comentário (') quebrado em duas linhas, que fazia "Direita) RU09 <-- funcionario"
+' ser lido como código. Também removida a ligação gerente -> RU10, pois RU10
+' ("consultar e atualizar status das tarefas") é do Funcionário.
+left to right direction
+skinparam shadowing false
+
+actor "Gerente" as gerente
+actor "Funcionário" as funcionario
+actor "Comprador" as comprador
+
+rectangle "Sistema de Gerenciamento de Pessoas (Atacadão)" {
+  package "Gestão de Cadastro e Equipe" {
+    usecase "RU01 - Gerenciar funcionários\n(cadastrar, editar, desativar)" as RU01
+  }
+  package "Gestão de Tarefas" {
+    usecase "RU02 - Criar, atribuir e acompanhar tarefas" as RU02
+    usecase "RU06 - Visualizar painel de andamento por setor" as RU06
+    usecase "RU10 - Consultar e atualizar status das tarefas" as RU10
+  }
+  package "Escala, Frequência e Ponto" {
+    usecase "RU03 - Definir e editar escala de horários" as RU03
+    usecase "RU05 - Consultar log de ponto da equipe" as RU05
+    usecase "RU07 - Registrar ausências, atrasos e trocas de turno" as RU07
+    usecase "RU08 - Remanejar e notificar substituições imediatas" as RU08
+    usecase "RU09 - Consultar escala de horários" as RU09
+    usecase "RU11 - Registrar ponto (entrada/saída)" as RU11
+  }
+  package "Comunicação Interna" {
+    usecase "RU04 - Enviar comunicados e notificações" as RU04
+    usecase "RU12 - Consultar comunicados recebidos" as RU12
+    usecase "RU13 - Enviar solicitações/mensagens ao gerente" as RU13
+  }
+  package "Atendimento/Orientação" {
+    usecase "RU14 - Consultar contatos dos setores/áreas" as RU14
+  }
+}
+
+' Gerente
+gerente --> RU01
+gerente --> RU02
+gerente --> RU06
+gerente --> RU03
+gerente --> RU05
+gerente --> RU07
+gerente --> RU08
+gerente --> RU04
+
+' Funcionário
+funcionario --> RU09
+funcionario --> RU10
+funcionario --> RU11
+funcionario --> RU12
+funcionario --> RU13
+
+' Comprador
+comprador --> RU14
+@enduml

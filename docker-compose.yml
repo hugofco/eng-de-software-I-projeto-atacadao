@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: wfm
+      POSTGRES_USER: wfm
+      POSTGRES_PASSWORD: wfm
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wfm -d wfm"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  web:
+    build: .
+    # O código é montado como volume: migrações geradas na 1ª subida aparecem
+    # na sua pasta (apps/*/migrations/) e devem ser versionadas no git.
+    volumes:
+      - .:/app
+    environment:
+      DB_ENGINE: postgres
+      POSTGRES_DB: wfm
+      POSTGRES_USER: wfm
+      POSTGRES_PASSWORD: wfm
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      DJANGO_DEBUG: "True"
+      SEED_DEMO: "1"
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
